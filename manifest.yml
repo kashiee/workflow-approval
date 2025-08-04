@@ -1,0 +1,26 @@
+app:
+  id: ari:cloud:ecosystem::app/211d1cb0-198a-40af-844b-c5e59aa22c41
+  name: Workflow Approvals
+  description: Multi-user workflow approval system
+  runtime:
+    name: nodejs20.x
+
+modules:
+  jira:adminPage:
+    - key: workflow-approvals-admin
+      function: resolver
+      title: Workflow Approvals
+      route: workflow-approvals
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue.svg
+      resource: main
+  function:
+    - key: resolver
+      handler: index.handler
+    - key: main
+      handler: index.handler
+
+permissions:
+  scopes:
+    - read:jira-work
+    - write:jira-work
+    - read:jira-user 

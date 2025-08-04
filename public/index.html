@@ -97,7 +97,6 @@
             font-size: 14px;
             font-weight: 600;
             transition: transform 0.2s;
-            margin-right: 10px;
         }
         
         button:hover {
@@ -224,22 +223,7 @@
             <div class="section">
                 <h2>📊 App Statistics</h2>
                 <div class="stats" id="stats">
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Total Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Pending Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Approved Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">0</div>
-                        <div class="stat-label">Pending Approvals</div>
-                    </div>
+                    <div class="loading">Loading statistics...</div>
                 </div>
             </div>
             
@@ -267,7 +251,7 @@
             <div class="section">
                 <h2>📋 Tasks Overview</h2>
                 <div id="tasksList">
-                    <p>No tasks created yet.</p>
+                    <div class="loading">Loading tasks...</div>
                 </div>
             </div>
             
@@ -275,200 +259,208 @@
             <div class="section">
                 <h2>⏳ Pending Approvals</h2>
                 <div id="approvalsList">
-                    <p>No pending approvals for you.</p>
+                    <div class="loading">Loading approvals...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // In-memory storage for demo
-        let tasks = [];
-        let approvals = [];
-        let currentUser = 'singhkashiee20@gmail.com';
-
+        const API_BASE = 'http://localhost:3000/api';
+        
         // Load data on page load
         document.addEventListener('DOMContentLoaded', function() {
-            updateStats();
+            loadStats();
             loadTasks();
             loadApprovals();
         });
-
+        
         // Create task form handler
-        document.getElementById('createTaskForm').addEventListener('submit', function(e) {
+        document.getElementById('createTaskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(e.target);
             const taskData = {
                 title: formData.get('title'),
                 description: formData.get('description'),
-                requester: currentUser,
+                requester: 'singhkashiee20@gmail.com',
                 approvers: formData.get('approvers').split(',').map(email => email.trim())
             };
             
-            createTask(taskData);
-            e.target.reset();
-        });
-
-        function createTask(taskData) {
-            const newTask = {
-                id: Date.now().toString(),
-                title: taskData.title,
-                description: taskData.description,
-                requester: taskData.requester,
-                approvers: taskData.approvers,
-                status: 'pending',
-                createdAt: new Date(),
-                approvedBy: [],
-                rejectedBy: []
-            };
-
-            tasks.push(newTask);
-            
-            // Create approval records for each approver
-            newTask.approvers.forEach(approver => {
-                approvals.push({
-                    id: `${newTask.id}-${approver}`,
-                    taskId: newTask.id,
-                    approver: approver,
-                    status: 'pending',
-                    createdAt: new Date()
+            try {
+                const response = await fetch(`${API_BASE}/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(taskData)
                 });
-            });
-
-            updateStats();
-            loadTasks();
-            loadApprovals();
-            alert('Task created successfully!');
-        }
-
-        function updateStats() {
-            const totalTasks = tasks.length;
-            const pendingTasks = tasks.filter(t => t.status === 'pending').length;
-            const approvedTasks = tasks.filter(t => t.status === 'approved').length;
-            const pendingApprovals = approvals.filter(a => a.status === 'pending').length;
-
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${totalTasks}</div>
-                    <div class="stat-label">Total Tasks</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${pendingTasks}</div>
-                    <div class="stat-label">Pending Tasks</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${approvedTasks}</div>
-                    <div class="stat-label">Approved Tasks</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${pendingApprovals}</div>
-                    <div class="stat-label">Pending Approvals</div>
-                </div>
-            `;
-        }
-
-        function loadTasks() {
-            if (tasks.length === 0) {
-                document.getElementById('tasksList').innerHTML = '<p>No tasks created yet.</p>';
-                return;
-            }
-
-            const tasksHTML = tasks.map(task => {
-                const progressPercentage = (task.approvedBy.length / task.approvers.length) * 100;
-                const statusClass = task.status === 'approved' ? 'status-approved' : 
-                                  task.status === 'rejected' ? 'status-rejected' : 'status-pending';
                 
-                return `
-                    <div class="task-card">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-description">${task.description}</div>
-                        <div class="task-status ${statusClass}">${task.status.toUpperCase()}</div>
-                        <div class="approvers-list">
-                            <strong>Approvers:</strong> ${task.approvers.join(', ')}
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                        </div>
-                        <div style="margin-top: 10px; font-size: 14px; color: #6c757d;">
-                            Progress: ${task.approvedBy.length}/${task.approvers.length} approved
-                        </div>
+                if (response.ok) {
+                    alert('Task created successfully!');
+                    e.target.reset();
+                    loadTasks();
+                    loadApprovals();
+                    loadStats();
+                } else {
+                    alert('Error creating task');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating task');
+            }
+        });
+        
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const stats = await response.json();
+                
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.tasks.total}</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.tasks.pending}</div>
+                        <div class="stat-label">Pending Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.tasks.approved}</div>
+                        <div class="stat-label">Approved Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.approvals.pending}</div>
+                        <div class="stat-label">Pending Approvals</div>
                     </div>
                 `;
-            }).join('');
-
-            document.getElementById('tasksList').innerHTML = tasksHTML;
-        }
-
-        function loadApprovals() {
-            const userApprovals = approvals.filter(a => 
-                a.approver === currentUser && a.status === 'pending'
-            );
-
-            if (userApprovals.length === 0) {
-                document.getElementById('approvalsList').innerHTML = '<p>No pending approvals for you.</p>';
-                return;
+            } catch (error) {
+                document.getElementById('stats').innerHTML = '<div class="error">Error loading statistics</div>';
             }
-
-            const approvalsHTML = userApprovals.map(approval => {
-                const task = tasks.find(t => t.id === approval.taskId);
-                return `
-                    <div class="task-card">
-                        <div class="task-title">${task?.title || 'Unknown Task'}</div>
-                        <div class="task-description">${task?.description || ''}</div>
-                        <div class="task-status status-pending">PENDING YOUR APPROVAL</div>
-                        <div style="margin-top: 15px;">
-                            <button onclick="approveTask('${approval.taskId}')">✅ Approve</button>
-                            <button onclick="rejectTask('${approval.taskId}')" style="background: #dc3545;">❌ Reject</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('approvalsList').innerHTML = approvalsHTML;
         }
-
-        function approveTask(taskId) {
-            const task = tasks.find(t => t.id === taskId);
-            const approval = approvals.find(a => a.taskId === taskId && a.approver === currentUser);
-            
-            if (task && approval) {
-                approval.status = 'approved';
-                approval.approvedAt = new Date();
+        
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${API_BASE}/tasks`);
+                const tasks = await response.json();
                 
-                task.approvedBy.push(currentUser);
-                
-                // Check if all approvers have approved
-                if (task.approvedBy.length === task.approvers.length) {
-                    task.status = 'approved';
+                if (tasks.length === 0) {
+                    document.getElementById('tasksList').innerHTML = '<p>No tasks created yet.</p>';
+                    return;
                 }
                 
-                updateStats();
-                loadTasks();
-                loadApprovals();
-                alert('Task approved successfully!');
+                const tasksHTML = tasks.map(task => {
+                    const progressPercentage = (task.approvedBy.length / task.approvers.length) * 100;
+                    const statusClass = task.status === 'approved' ? 'status-approved' : 
+                                      task.status === 'rejected' ? 'status-rejected' : 'status-pending';
+                    
+                    return `
+                        <div class="task-card">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-description">${task.description}</div>
+                            <div class="task-status ${statusClass}">${task.status.toUpperCase()}</div>
+                            <div class="approvers-list">
+                                <strong>Approvers:</strong> ${task.approvers.join(', ')}
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 14px; color: #6c757d;">
+                                Progress: ${task.approvedBy.length}/${task.approvers.length} approved
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('tasksList').innerHTML = tasksHTML;
+            } catch (error) {
+                document.getElementById('tasksList').innerHTML = '<div class="error">Error loading tasks</div>';
             }
         }
-
-        function rejectTask(taskId) {
+        
+        async function loadApprovals() {
+            try {
+                const response = await fetch(`${API_BASE}/users/singhkashiee20@gmail.com/approvals`);
+                const approvals = await response.json();
+                
+                if (approvals.length === 0) {
+                    document.getElementById('approvalsList').innerHTML = '<p>No pending approvals for you.</p>';
+                    return;
+                }
+                
+                const approvalsHTML = approvals.map(approval => {
+                    return `
+                        <div class="task-card">
+                            <div class="task-title">${approval.task.title}</div>
+                            <div class="task-description">${approval.task.description}</div>
+                            <div class="task-status status-pending">PENDING YOUR APPROVAL</div>
+                            <div style="margin-top: 15px;">
+                                <button onclick="approveTask('${approval.taskId}')" style="margin-right: 10px;">✅ Approve</button>
+                                <button onclick="rejectTask('${approval.taskId}')" style="background: #dc3545;">❌ Reject</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('approvalsList').innerHTML = approvalsHTML;
+            } catch (error) {
+                document.getElementById('approvalsList').innerHTML = '<div class="error">Error loading approvals</div>';
+            }
+        }
+        
+        async function approveTask(taskId) {
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${taskId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        approver: 'singhkashiee20@gmail.com'
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Task approved successfully!');
+                    loadTasks();
+                    loadApprovals();
+                    loadStats();
+                } else {
+                    alert('Error approving task');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error approving task');
+            }
+        }
+        
+        async function rejectTask(taskId) {
             const reason = prompt('Enter rejection reason:');
             if (!reason) return;
             
-            const task = tasks.find(t => t.id === taskId);
-            const approval = approvals.find(a => a.taskId === taskId && a.approver === currentUser);
-            
-            if (task && approval) {
-                approval.status = 'rejected';
-                approval.rejectedAt = new Date();
-                approval.reason = reason;
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${taskId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        approver: 'singhkashiee20@gmail.com',
+                        reason: reason
+                    })
+                });
                 
-                task.status = 'rejected';
-                task.rejectedBy.push({ approver: currentUser, reason });
-                
-                updateStats();
-                loadTasks();
-                loadApprovals();
-                alert('Task rejected');
+                if (response.ok) {
+                    alert('Task rejected');
+                    loadTasks();
+                    loadApprovals();
+                    loadStats();
+                } else {
+                    alert('Error rejecting task');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error rejecting task');
             }
         }
     </script>
