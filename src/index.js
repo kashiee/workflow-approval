@@ -5,28 +5,24 @@ import ForgeUI, {
   Button, 
   Form, 
   TextField, 
-  Select, 
-  Option,
   Table,
   Head,
   Row,
   Cell
 } from "@forge/ui";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-// In-memory storage for demo (replace with database in production)
+// In-memory storage for demo
 let tasks = [];
 let approvals = [];
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState("demo@company.com");
-  const [tasksList, setTasksList] = useState([]);
-  const [approvalsList, setApprovalsList] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("demo@company.com");
+  const [currentUser, setCurrentUser] = React.useState("demo@company.com");
+  const [tasksList, setTasksList] = React.useState([]);
+  const [approvalsList, setApprovalsList] = React.useState([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     loadData();
-    // Add demo data for testing
     if (tasks.length === 0) {
       addDemoData();
     }
@@ -41,7 +37,7 @@ const App = () => {
     const demoTask = {
       id: 'demo-1',
       title: 'Implement Security Protocol',
-      description: 'Add multi-factor authentication and encryption to user login system',
+      description: 'Add multi-factor authentication to user login system',
       requester: 'manager@company.com',
       approvers: ['security@company.com', 'user1@test.com', 'user2@test.com'],
       status: 'pending',
@@ -52,26 +48,17 @@ const App = () => {
     
     tasks.push(demoTask);
     
-    // Add approval records
     demoTask.approvers.forEach(approver => {
       approvals.push({
         id: `${demoTask.id}-${approver}`,
         taskId: demoTask.id,
         approver: approver,
         status: approver === 'security@company.com' ? 'approved' : 'pending',
-        createdAt: new Date(),
-        approvedAt: approver === 'security@company.com' ? new Date() : null,
-        rejectedAt: null,
-        reason: null
+        createdAt: new Date()
       });
     });
     
     loadData();
-  };
-
-  const switchUser = (newUser) => {
-    setCurrentUser(newUser);
-    setSelectedUser(newUser);
   };
 
   const createTask = async (formData) => {
@@ -83,14 +70,12 @@ const App = () => {
       approvers: formData.approvers.split(',').map(email => email.trim()),
       status: 'pending',
       createdAt: new Date(),
-      currentStep: 0,
       approvedBy: [],
       rejectedBy: []
     };
 
     tasks.push(newTask);
     
-    // Create approval records for each approver
     newTask.approvers.forEach(approver => {
       approvals.push({
         id: `${newTask.id}-${approver}`,
@@ -102,7 +87,6 @@ const App = () => {
     });
 
     loadData();
-    console.log('Task created:', newTask);
   };
 
   const approveTask = async (taskId, approver) => {
@@ -114,32 +98,27 @@ const App = () => {
       approval.approvedAt = new Date();
       
       task.approvedBy.push(approver);
-      task.currentStep++;
       
-      // Check if all approvers have approved
       if (task.approvedBy.length === task.approvers.length) {
         task.status = 'approved';
       }
       
       loadData();
-      console.log('Task approved by:', approver);
     }
   };
 
-  const rejectTask = async (taskId, approver, reason) => {
+  const rejectTask = async (taskId, approver) => {
     const task = tasks.find(t => t.id === taskId);
     const approval = approvals.find(a => a.taskId === taskId && a.approver === approver);
     
     if (task && approval) {
       approval.status = 'rejected';
       approval.rejectedAt = new Date();
-      approval.reason = reason;
       
       task.status = 'rejected';
-      task.rejectedBy.push({ approver, reason });
+      task.rejectedBy.push(approver);
       
       loadData();
-      console.log('Task rejected by:', approver);
     }
   };
 
@@ -147,16 +126,6 @@ const App = () => {
     if (task.status === 'approved') return '✅ Approved';
     if (task.status === 'rejected') return '❌ Rejected';
     return `⏳ Pending (${task.approvedBy.length}/${task.approvers.length})`;
-  };
-
-  const getApprovalStatus = (task, approver) => {
-    const approval = approvals.find(a => a.taskId === task.id && a.approver === approver);
-    if (!approval) return 'pending';
-    return approval.status;
-  };
-
-  const canProceed = (task) => {
-    return task.approvedBy.length === task.approvers.length;
   };
 
   return render(
@@ -169,33 +138,24 @@ const App = () => {
           ]
         }),
         
-        // User Switcher Section
-        Text({ children: ["👤 Demo User Switcher"] }),
-        Text({ 
-          children: [`Current User: ${currentUser}`] 
-        }),
-        Text({ 
-          children: ["Switch to different users to test the approval workflow:"] 
-        }),
-        Select({
-          placeholder: "Select user to switch to",
-          value: selectedUser,
-          onChange: (value) => setSelectedUser(value),
-          children: [
-            Option({ text: "demo@company.com", value: "demo@company.com" }),
-            Option({ text: "user1@test.com", value: "user1@test.com" }),
-            Option({ text: "user2@test.com", value: "user2@test.com" }),
-            Option({ text: "security@company.com", value: "security@company.com" }),
-            Option({ text: "manager@company.com", value: "manager@company.com" })
-          ]
+        // User Switcher
+        Text({ children: ["👤 Current User: " + currentUser] }),
+        Text({ children: ["Switch user to test different perspectives:"] }),
+        Button({
+          text: "Switch to user1@test.com",
+          onClick: () => setCurrentUser("user1@test.com")
         }),
         Button({
-          text: "Switch User",
-          onClick: () => switchUser(selectedUser)
+          text: "Switch to user2@test.com", 
+          onClick: () => setCurrentUser("user2@test.com")
+        }),
+        Button({
+          text: "Switch to security@company.com",
+          onClick: () => setCurrentUser("security@company.com")
         }),
         Text({ children: ["---"] }),
         
-        // Create New Task Form
+        // Create Task Form
         Text({ children: ["📝 Create New Task"] }),
         Form({
           onSubmit: createTask,
@@ -206,7 +166,7 @@ const App = () => {
               placeholder: "Implement new feature"
             }),
             TextField({
-              name: "description",
+              name: "description", 
               label: "Description",
               placeholder: "Detailed description of the task"
             }),
@@ -222,7 +182,7 @@ const App = () => {
           ]
         }),
 
-        // Tasks List
+        // Tasks Overview
         Text({ children: ["📋 Tasks Overview"] }),
         Table({
           children: [
@@ -230,8 +190,7 @@ const App = () => {
               children: [
                 Cell({ children: ["Task"] }),
                 Cell({ children: ["Status"] }),
-                Cell({ children: ["Progress"] }),
-                Cell({ children: ["Actions"] })
+                Cell({ children: ["Progress"] })
               ]
             }),
             ...tasksList.map(task => 
@@ -248,14 +207,6 @@ const App = () => {
                     children: [
                       `${task.approvedBy.length}/${task.approvers.length} approved`
                     ]
-                  }),
-                  Cell({
-                    children: task.status === 'pending' ? [
-                      Button({
-                        text: "View Details",
-                        onClick: () => console.log('View task:', task.id)
-                      })
-                    ] : []
                   })
                 ]
               })
@@ -263,7 +214,7 @@ const App = () => {
           ]
         }),
 
-        // Pending Approvals for Current User
+        // Pending Approvals
         Text({ children: [`⏳ Pending Approvals for ${currentUser}`] }),
         Table({
           children: [
@@ -271,7 +222,6 @@ const App = () => {
               children: [
                 Cell({ children: ["Task"] }),
                 Cell({ children: ["Requester"] }),
-                Cell({ children: ["Your Status"] }),
                 Cell({ children: ["Actions"] })
               ]
             }),
@@ -291,7 +241,6 @@ const App = () => {
                       ]
                     }),
                     Cell({ children: [task?.requester || ''] }),
-                    Cell({ children: ["⏳ Pending Approval"] }),
                     Cell({
                       children: [
                         Button({
@@ -300,7 +249,7 @@ const App = () => {
                         }),
                         Button({
                           text: "❌ Reject",
-                          onClick: () => rejectTask(approval.taskId, currentUser, "Rejected by user")
+                          onClick: () => rejectTask(approval.taskId, currentUser)
                         })
                       ]
                     })
@@ -308,68 +257,7 @@ const App = () => {
                 });
               })
           ]
-        }),
-        
-        // Show approved/rejected tasks for current user
-        Text({ children: [`📊 Your Approval History for ${currentUser}`] }),
-        Table({
-          children: [
-            Head({
-              children: [
-                Cell({ children: ["Task"] }),
-                Cell({ children: ["Your Decision"] }),
-                Cell({ children: ["Date"] })
-              ]
-            }),
-            ...approvalsList
-              .filter(approval => 
-                approval.approver === currentUser && 
-                approval.status !== 'pending'
-              )
-              .map(approval => {
-                const task = tasks.find(t => t.id === approval.taskId);
-                return Row({
-                  children: [
-                    Cell({ 
-                      children: [
-                        Text({ children: [task?.title || 'Unknown Task'] })
-                      ]
-                    }),
-                    Cell({ 
-                      children: [
-                        approval.status === 'approved' ? "✅ Approved" : "❌ Rejected"
-                      ] 
-                    }),
-                    Cell({ 
-                      children: [
-                        approval.approvedAt ? new Date(approval.approvedAt).toLocaleDateString() :
-                        approval.rejectedAt ? new Date(approval.rejectedAt).toLocaleDateString() : "N/A"
-                      ] 
-                    })
-                  ]
-                });
-              })
-          ]
-        }),
-
-        // Task Details and Progress
-        Text({ children: ["📊 Task Progress Details"] }),
-        ...tasksList.map(task => 
-          render(
-            Text({
-              children: [
-                `Task: ${task.title}`,
-                `Status: ${getTaskStatus(task)}`,
-                `Progress: ${task.approvedBy.length}/${task.approvers.length} approvals`,
-                `Approvers: ${task.approvers.join(', ')}`,
-                `Approved by: ${task.approvedBy.join(', ') || 'None'}`,
-                task.status === 'rejected' ? `Rejected by: ${task.rejectedBy.map(r => r.approver).join(', ')}` : '',
-                canProceed(task) ? "✅ Task can proceed!" : "⏳ Waiting for all approvals",
-                "---"
-              ]
-            })
-          )
-        )
+        })
       ]
     })
   );
@@ -377,7 +265,6 @@ const App = () => {
 
 export const run = App;
 
-// Handler function for Forge
 export const handler = async (event, context) => {
   return run(event, context);
 }; 
