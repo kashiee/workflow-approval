@@ -299,6 +299,16 @@
             border-left: 4px solid #ffc107;
         }
         
+        .info-message {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+            border-left: 4px solid #17a2b8;
+        }
+        
         .rejection-info {
             background: #f8d7da;
             color: #721c24;
@@ -381,6 +391,36 @@
                     <li><strong>Step 4:</strong> Show rejection functionality and its impact</li>
                     <li><strong>Step 5:</strong> Highlight the professional interface and real-time updates</li>
                 </ul>
+                
+                <h4 style="margin-top: 20px; color: #ffc107;">🧪 How to Test Approval Functionality:</h4>
+                <ol style="margin-left: 20px; line-height: 1.8;">
+                    <li><strong>Create a task</strong> with approvers like: <code>user1@test.com, user2@test.com, user3@test.com</code></li>
+                    <li><strong>Switch user</strong> to one of the approvers using the dropdown below</li>
+                    <li><strong>Go to "Your Pending Approvals"</strong> section to see the task</li>
+                    <li><strong>Click "Approve" or "Reject"</strong> to test the functionality</li>
+                    <li><strong>Switch to another approver</strong> to continue testing</li>
+                </ol>
+            </div>
+            
+            <!-- User Switcher -->
+            <div class="section">
+                <h2>👤 Current User: <span id="currentUserDisplay">demo@company.com</span></h2>
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 20px;">
+                    <label for="userSwitcher" style="margin: 0;">Switch User:</label>
+                    <select id="userSwitcher" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                        <option value="demo@company.com">demo@company.com</option>
+                        <option value="user1@test.com">user1@test.com</option>
+                        <option value="user2@test.com">user2@test.com</option>
+                        <option value="user3@test.com">user3@test.com</option>
+                        <option value="manager@company.com">manager@company.com</option>
+                        <option value="security@company.com">security@company.com</option>
+                    </select>
+                    <button onclick="switchUser()" class="btn" style="padding: 8px 16px; font-size: 12px;">Switch</button>
+                </div>
+                <p style="color: #6c757d; font-size: 14px;">
+                    <strong>💡 Tip:</strong> Switch to different users to see how they can approve/reject tasks. 
+                    Only users listed as approvers will see tasks in their "Pending Approvals" section.
+                </p>
             </div>
             
             <!-- Statistics Dashboard -->
@@ -461,6 +501,8 @@
         const taskForm = document.getElementById('taskForm');
         const tasksContainer = document.getElementById('tasksContainer');
         const approvalsContainer = document.getElementById('approvalsContainer');
+        const userSwitcher = document.getElementById('userSwitcher');
+        const currentUserDisplay = document.getElementById('currentUserDisplay');
         
         // Validation functions
         function validateEmail(email) {
@@ -716,7 +758,9 @@
         // Show message function
         function showMessage(message, type) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = type === 'success' ? 'success-message' : type === 'warning' ? 'warning-message' : 'rejection-info';
+            messageDiv.className = type === 'success' ? 'success-message' : 
+                                  type === 'warning' ? 'warning-message' : 
+                                  type === 'info' ? 'info-message' : 'rejection-info';
             messageDiv.textContent = message;
             
             const content = document.querySelector('.content');
@@ -735,17 +779,17 @@
         renderTasks();
         renderApprovals();
         
-        // Add some demo data for recording
+        // Add demo data for easier testing
         function addDemoData() {
             const demoTask = {
                 id: 'demo-1',
-                title: 'Implement New Feature',
-                description: 'Add user authentication system with multi-factor authentication support',
+                title: 'Implement Security Protocol',
+                description: 'Add multi-factor authentication and encryption to user login system',
                 requester: 'manager@company.com',
-                approvers: ['tech@company.com', 'security@company.com', 'demo@company.com'],
+                approvers: ['security@company.com', 'user1@test.com', 'user2@test.com'],
                 status: 'pending',
                 createdAt: new Date(),
-                approvedBy: ['tech@company.com'],
+                approvedBy: ['security@company.com'],
                 rejectedBy: [],
                 canProceed: false
             };
@@ -758,9 +802,9 @@
                     id: `${demoTask.id}-${approver}`,
                     taskId: demoTask.id,
                     approver: approver,
-                    status: approver === 'tech@company.com' ? 'approved' : 'pending',
+                    status: approver === 'security@company.com' ? 'approved' : 'pending',
                     createdAt: new Date(),
-                    approvedAt: approver === 'tech@company.com' ? new Date() : null,
+                    approvedAt: approver === 'security@company.com' ? new Date() : null,
                     rejectedAt: null,
                     reason: null
                 });
@@ -769,10 +813,26 @@
             updateDashboard();
             renderTasks();
             renderApprovals();
+            showMessage('Demo data loaded! Switch to user1@test.com or user2@test.com to test approvals.', 'info');
         }
         
-        // Uncomment the line below to add demo data for recording
-        // addDemoData();
+        // Add demo data automatically for easier testing
+        addDemoData();
+
+        // User switcher function
+        function switchUser() {
+            const newUser = userSwitcher.value;
+            if (newUser !== currentUser) {
+                currentUser = newUser;
+                currentUserDisplay.textContent = currentUser;
+                updateDashboard();
+                renderTasks();
+                renderApprovals();
+                showMessage(`Switched to user: ${currentUser}`, 'info');
+            } else {
+                showMessage('You are already logged in as this user.', 'warning');
+            }
+        }
     </script>
 </body>
 </html> 
