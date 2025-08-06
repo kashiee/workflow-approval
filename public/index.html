@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workflow Approvals App - Demo</title>
+    <title>Workflow Approvals System - Professional Demo</title>
     <style>
         * {
             margin: 0;
@@ -12,14 +12,14 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -30,18 +30,37 @@
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
         }
         
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
         }
         
         .header p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .demo-info {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .demo-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .demo-info p {
+            color: #6c757d;
+            line-height: 1.6;
         }
         
         .content {
@@ -50,7 +69,7 @@
         
         .section {
             margin-bottom: 40px;
-            padding: 25px;
+            padding: 30px;
             border: 1px solid #e1e5e9;
             border-radius: 8px;
             background: #f8f9fa;
@@ -58,118 +77,13 @@
         
         .section h2 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
         
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .task-card {
-            background: white;
-            border: 1px solid #e1e5e9;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .task-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .task-description {
-            color: #6c757d;
-            margin-bottom: 15px;
-        }
-        
-        .task-status {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-approved {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-rejected {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .approvers-list {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #6c757d;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e1e5e9;
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
-        }
-        
-        .stats {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -178,291 +92,687 @@
         
         .stat-card {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 8px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e1e5e9;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
         
         .stat-number {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #667eea;
+            margin-bottom: 10px;
         }
         
         .stat-label {
             color: #6c757d;
             font-size: 14px;
-            margin-top: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .error {
+            border-color: #e74c3c !important;
+            background: #fdf2f2 !important;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-approve {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .btn-reject {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+        }
+        
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+        
+        .task-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+        
+        .task-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .task-card p {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .approvers {
+            margin: 15px 0;
+            font-size: 14px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e1e5e9;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            border-left: 4px solid #28a745;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .rejection-info {
             background: #f8d7da;
             color: #721c24;
             padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .approval-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .demo-controls {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .demo-controls h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .demo-controls p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .demo-controls ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .demo-controls li {
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .approval-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Workflow Approvals App</h1>
-            <p>Multi-user approval system - Tasks require ALL users to approve before proceeding</p>
+            <h1>Workflow Approvals System</h1>
+            <p>Professional Multi-User Approval Workflow Demo</p>
+        </div>
+        
+        <div class="demo-info">
+            <h3>🎯 Demo Instructions</h3>
+            <p>This demo showcases a professional workflow approval system where tasks require ALL designated approvers to approve before proceeding. Perfect for enterprise environments requiring strict approval processes.</p>
         </div>
         
         <div class="content">
-            <!-- Stats Section -->
+            <!-- Demo Controls -->
+            <div class="demo-controls">
+                <h3>📋 Demo Recording Guide</h3>
+                <p><strong>For your demo recording, follow these steps:</strong></p>
+                <ul>
+                    <li><strong>Step 1:</strong> Create a new task with multiple approvers</li>
+                    <li><strong>Step 2:</strong> Show how partial approvals don't allow task progression</li>
+                    <li><strong>Step 3:</strong> Demonstrate that ALL approvers must approve</li>
+                    <li><strong>Step 4:</strong> Show rejection functionality and its impact</li>
+                    <li><strong>Step 5:</strong> Highlight the professional interface and real-time updates</li>
+                </ul>
+            </div>
+            
+            <!-- Statistics Dashboard -->
             <div class="section">
-                <h2>📊 App Statistics</h2>
-                <div class="stats" id="stats">
-                    <div class="loading">Loading statistics...</div>
+                <h2>📊 System Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTasks">0</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingTasks">0</div>
+                        <div class="stat-label">Pending Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="approvedTasks">0</div>
+                        <div class="stat-label">Approved Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="rejectedTasks">0</div>
+                        <div class="stat-label">Rejected Tasks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="pendingApprovals">0</div>
+                        <div class="stat-label">Your Pending Approvals</div>
+                    </div>
                 </div>
             </div>
             
             <!-- Create Task Section -->
             <div class="section">
                 <h2>📝 Create New Task</h2>
-                <form id="createTaskForm">
+                <form id="taskForm">
                     <div class="form-group">
-                        <label for="taskTitle">Task Title</label>
-                        <input type="text" id="taskTitle" name="title" placeholder="Implement new feature" required>
+                        <label for="taskTitle">Task Title *</label>
+                        <input type="text" id="taskTitle" placeholder="Enter professional task title" required>
+                        <div class="error-message" id="titleError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="taskDescription">Description</label>
-                        <textarea id="taskDescription" name="description" rows="3" placeholder="Detailed description of the task" required></textarea>
+                        <label for="taskDescription">Description *</label>
+                        <textarea id="taskDescription" rows="4" placeholder="Enter detailed task description" required></textarea>
+                        <div class="error-message" id="descriptionError"></div>
                     </div>
                     <div class="form-group">
-                        <label for="taskApprovers">Approvers (comma-separated emails)</label>
-                        <input type="text" id="taskApprovers" name="approvers" placeholder="user1@company.com, user2@company.com, user3@company.com" required>
+                        <label for="approvers">Approvers (comma-separated emails) *</label>
+                        <input type="text" id="approvers" placeholder="user1@company.com, user2@company.com, user3@company.com" required>
+                        <div class="error-message" id="approversError"></div>
                     </div>
-                    <button type="submit">Create Task</button>
+                    <button type="submit" class="btn">Create Task</button>
                 </form>
             </div>
             
-            <!-- Tasks List Section -->
+            <!-- Tasks Overview -->
             <div class="section">
                 <h2>📋 Tasks Overview</h2>
-                <div id="tasksList">
-                    <div class="loading">Loading tasks...</div>
+                <div id="tasksContainer">
+                    <p>No tasks created yet. Create your first task above to see the workflow in action.</p>
                 </div>
             </div>
             
-            <!-- Approvals Section -->
+            <!-- Pending Approvals -->
             <div class="section">
-                <h2>⏳ Pending Approvals</h2>
-                <div id="approvalsList">
-                    <div class="loading">Loading approvals...</div>
+                <h2>⏳ Your Pending Approvals</h2>
+                <div id="approvalsContainer">
+                    <p>No pending approvals for you.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:3000/api';
+        // In-memory storage for demo
+        let tasks = [];
+        let approvals = [];
+        let currentUser = "demo@company.com";
         
-        // Load data on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadStats();
-            loadTasks();
-            loadApprovals();
-        });
+        // DOM elements
+        const taskForm = document.getElementById('taskForm');
+        const tasksContainer = document.getElementById('tasksContainer');
+        const approvalsContainer = document.getElementById('approvalsContainer');
         
-        // Create task form handler
-        document.getElementById('createTaskForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const taskData = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                requester: 'singhkashiee20@gmail.com',
-                approvers: formData.get('approvers').split(',').map(email => email.trim())
-            };
-            
-            try {
-                const response = await fetch(`${API_BASE}/tasks`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(taskData)
-                });
-                
-                if (response.ok) {
-                    alert('Task created successfully!');
-                    e.target.reset();
-                    loadTasks();
-                    loadApprovals();
-                    loadStats();
-                } else {
-                    alert('Error creating task');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error creating task');
-            }
-        });
-        
-        async function loadStats() {
-            try {
-                const response = await fetch(`${API_BASE}/stats`);
-                const stats = await response.json();
-                
-                document.getElementById('stats').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.tasks.total}</div>
-                        <div class="stat-label">Total Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.tasks.pending}</div>
-                        <div class="stat-label">Pending Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.tasks.approved}</div>
-                        <div class="stat-label">Approved Tasks</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.approvals.pending}</div>
-                        <div class="stat-label">Pending Approvals</div>
-                    </div>
-                `;
-            } catch (error) {
-                document.getElementById('stats').innerHTML = '<div class="error">Error loading statistics</div>';
-            }
+        // Validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email.trim());
         }
         
-        async function loadTasks() {
-            try {
-                const response = await fetch(`${API_BASE}/tasks`);
-                const tasks = await response.json();
+        function validateForm() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const approvers = document.getElementById('approvers').value.trim();
+            
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('input, textarea').forEach(el => el.classList.remove('error'));
+            
+            if (!title) {
+                document.getElementById('titleError').textContent = 'Task title is required';
+                document.getElementById('taskTitle').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!description) {
+                document.getElementById('descriptionError').textContent = 'Task description is required';
+                document.getElementById('taskDescription').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!approvers) {
+                document.getElementById('approversError').textContent = 'At least one approver is required';
+                document.getElementById('approvers').classList.add('error');
+                isValid = false;
+            } else {
+                const approverEmails = approvers.split(',').map(email => email.trim());
+                const invalidEmails = approverEmails.filter(email => !validateEmail(email));
                 
-                if (tasks.length === 0) {
-                    document.getElementById('tasksList').innerHTML = '<p>No tasks created yet.</p>';
-                    return;
+                if (invalidEmails.length > 0) {
+                    document.getElementById('approversError').textContent = `Invalid email format: ${invalidEmails.join(', ')}`;
+                    document.getElementById('approvers').classList.add('error');
+                    isValid = false;
                 }
                 
-                const tasksHTML = tasks.map(task => {
-                    const progressPercentage = (task.approvedBy.length / task.approvers.length) * 100;
-                    const statusClass = task.status === 'approved' ? 'status-approved' : 
-                                      task.status === 'rejected' ? 'status-rejected' : 'status-pending';
-                    
-                    return `
+                // Check for duplicate approvers
+                const uniqueApprovers = [...new Set(approverEmails)];
+                if (uniqueApprovers.length !== approverEmails.length) {
+                    document.getElementById('approversError').textContent = 'Duplicate approvers are not allowed';
+                    document.getElementById('approvers').classList.add('error');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+        
+        // Create task function
+        function createTask(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            const title = document.getElementById('taskTitle').value.trim();
+            const description = document.getElementById('taskDescription').value.trim();
+            const approvers = document.getElementById('approvers').value.trim();
+            const approverEmails = approvers.split(',').map(email => email.trim());
+            
+            const newTask = {
+                id: Date.now().toString(),
+                title: title,
+                description: description,
+                requester: currentUser,
+                approvers: approverEmails,
+                status: 'pending',
+                createdAt: new Date(),
+                approvedBy: [],
+                rejectedBy: [],
+                canProceed: false
+            };
+            
+            tasks.push(newTask);
+            
+            // Create approval records for each approver
+            approverEmails.forEach(approver => {
+                approvals.push({
+                    id: `${newTask.id}-${approver}`,
+                    taskId: newTask.id,
+                    approver: approver,
+                    status: 'pending',
+                    createdAt: new Date(),
+                    approvedAt: null,
+                    rejectedAt: null,
+                    reason: null
+                });
+            });
+            
+            // Clear form
+            taskForm.reset();
+            
+            // Show success message
+            showMessage('Task created successfully! All approvers have been notified.', 'success');
+            
+            // Update display
+            updateDashboard();
+            renderTasks();
+            renderApprovals();
+        }
+        
+        // Approve task function
+        function approveTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            const approval = approvals.find(a => a.taskId === taskId && a.approver === currentUser);
+            
+            if (!task || !approval || approval.status !== 'pending') {
+                showMessage('Unable to approve this task.', 'error');
+                return;
+            }
+            
+            approval.status = 'approved';
+            approval.approvedAt = new Date();
+            task.approvedBy.push(currentUser);
+            
+            // Check if ALL approvers have approved
+            if (task.approvedBy.length === task.approvers.length) {
+                task.status = 'approved';
+                task.canProceed = true;
+                showMessage('🎉 Task approved! ALL approvals received - task can now proceed!', 'success');
+            } else {
+                task.canProceed = false;
+                showMessage(`Task approved! ${task.approvedBy.length}/${task.approvers.length} approvals received. Waiting for ${task.approvers.length - task.approvedBy.length} more approval(s).`, 'warning');
+            }
+            
+            updateDashboard();
+            renderTasks();
+            renderApprovals();
+        }
+        
+        // Reject task function
+        function rejectTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            const approval = approvals.find(a => a.taskId === taskId && a.approver === currentUser);
+            
+            if (!task || !approval || approval.status !== 'pending') {
+                showMessage('Unable to reject this task.', 'error');
+                return;
+            }
+            
+            const reason = prompt('Enter rejection reason (required):');
+            if (!reason || reason.trim() === '') {
+                showMessage('Rejection reason is required!', 'error');
+                return;
+            }
+            
+            approval.status = 'rejected';
+            approval.rejectedAt = new Date();
+            approval.reason = reason.trim();
+            
+            task.status = 'rejected';
+            task.canProceed = false;
+            task.rejectedBy.push({ approver: currentUser, reason: approval.reason });
+            
+            showMessage(`Task rejected: ${reason}`, 'error');
+            
+            updateDashboard();
+            renderTasks();
+            renderApprovals();
+        }
+        
+        // Update dashboard statistics
+        function updateDashboard() {
+            document.getElementById('totalTasks').textContent = tasks.length;
+            document.getElementById('pendingTasks').textContent = tasks.filter(t => t.status === 'pending').length;
+            document.getElementById('approvedTasks').textContent = tasks.filter(t => t.status === 'approved').length;
+            document.getElementById('rejectedTasks').textContent = tasks.filter(t => t.status === 'rejected').length;
+            document.getElementById('pendingApprovals').textContent = approvals.filter(a => a.approver === currentUser && a.status === 'pending').length;
+        }
+        
+        // Render tasks
+        function renderTasks() {
+            if (tasks.length === 0) {
+                tasksContainer.innerHTML = '<p>No tasks created yet. Create your first task above to see the workflow in action.</p>';
+                return;
+            }
+            
+            tasksContainer.innerHTML = `
+                <div class="tasks-grid">
+                    ${tasks.map(task => `
                         <div class="task-card">
-                            <div class="task-title">${task.title}</div>
-                            <div class="task-description">${task.description}</div>
-                            <div class="task-status ${statusClass}">${task.status.toUpperCase()}</div>
-                            <div class="approvers-list">
+                            <h3>${task.title}</h3>
+                            <p>${task.description}</p>
+                            <div class="status-badge ${task.status}">${getTaskStatus(task)}</div>
+                            <div class="approvers">
                                 <strong>Approvers:</strong> ${task.approvers.join(', ')}
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                                <div class="progress-fill" style="width: ${(task.approvedBy.length / task.approvers.length) * 100}%"></div>
                             </div>
-                            <div style="margin-top: 10px; font-size: 14px; color: #6c757d;">
+                            <div class="progress-text">
                                 Progress: ${task.approvedBy.length}/${task.approvers.length} approved
                             </div>
+                            ${task.canProceed ? '<div class="success-message">🎉 Task can proceed! ALL approvals received!</div>' : ''}
+                            ${task.status === 'pending' && task.approvedBy.length > 0 ? '<div class="warning-message">⚠️ Waiting for ' + (task.approvers.length - task.approvedBy.length) + ' more approval(s)</div>' : ''}
+                            ${task.status === 'rejected' ? `
+                                <div class="rejection-info">
+                                    <strong>Rejected by:</strong> ${task.rejectedBy.map(r => r.approver).join(', ')}<br>
+                                    <strong>Reason:</strong> ${task.rejectedBy.map(r => r.reason).join(', ')}
+                                </div>
+                            ` : ''}
                         </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('tasksList').innerHTML = tasksHTML;
-            } catch (error) {
-                document.getElementById('tasksList').innerHTML = '<div class="error">Error loading tasks</div>';
-            }
+                    `).join('')}
+                </div>
+            `;
         }
         
-        async function loadApprovals() {
-            try {
-                const response = await fetch(`${API_BASE}/users/singhkashiee20@gmail.com/approvals`);
-                const approvals = await response.json();
-                
-                if (approvals.length === 0) {
-                    document.getElementById('approvalsList').innerHTML = '<p>No pending approvals for you.</p>';
-                    return;
-                }
-                
-                const approvalsHTML = approvals.map(approval => {
-                    return `
-                        <div class="task-card">
-                            <div class="task-title">${approval.task.title}</div>
-                            <div class="task-description">${approval.task.description}</div>
-                            <div class="task-status status-pending">PENDING YOUR APPROVAL</div>
-                            <div style="margin-top: 15px;">
-                                <button onclick="approveTask('${approval.taskId}')" style="margin-right: 10px;">✅ Approve</button>
-                                <button onclick="rejectTask('${approval.taskId}')" style="background: #dc3545;">❌ Reject</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('approvalsList').innerHTML = approvalsHTML;
-            } catch (error) {
-                document.getElementById('approvalsList').innerHTML = '<div class="error">Error loading approvals</div>';
-            }
-        }
-        
-        async function approveTask(taskId) {
-            try {
-                const response = await fetch(`${API_BASE}/tasks/${taskId}/approve`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        approver: 'singhkashiee20@gmail.com'
-                    })
-                });
-                
-                if (response.ok) {
-                    alert('Task approved successfully!');
-                    loadTasks();
-                    loadApprovals();
-                    loadStats();
-                } else {
-                    alert('Error approving task');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error approving task');
-            }
-        }
-        
-        async function rejectTask(taskId) {
-            const reason = prompt('Enter rejection reason:');
-            if (!reason) return;
+        // Render approvals
+        function renderApprovals() {
+            const pendingApprovals = approvals.filter(a => a.approver === currentUser && a.status === 'pending');
             
-            try {
-                const response = await fetch(`${API_BASE}/tasks/${taskId}/reject`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        approver: 'singhkashiee20@gmail.com',
-                        reason: reason
-                    })
-                });
-                
-                if (response.ok) {
-                    alert('Task rejected');
-                    loadTasks();
-                    loadApprovals();
-                    loadStats();
-                } else {
-                    alert('Error rejecting task');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error rejecting task');
+            if (pendingApprovals.length === 0) {
+                approvalsContainer.innerHTML = '<p>No pending approvals for you.</p>';
+                return;
             }
+            
+            approvalsContainer.innerHTML = `
+                <div class="tasks-grid">
+                    ${pendingApprovals.map(approval => {
+                        const task = tasks.find(t => t.id === approval.taskId);
+                        return `
+                            <div class="task-card">
+                                <h3>${task?.title || 'Unknown Task'}</h3>
+                                <p>${task?.description || ''}</p>
+                                <div class="status-badge pending">Pending Your Approval</div>
+                                <div class="approval-actions">
+                                    <button onclick="approveTask('${approval.taskId}')" class="btn btn-approve">Approve</button>
+                                    <button onclick="rejectTask('${approval.taskId}')" class="btn btn-reject">Reject</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
         }
+        
+        // Get task status text
+        function getTaskStatus(task) {
+            if (task.status === 'approved') return 'Approved';
+            if (task.status === 'rejected') return 'Rejected';
+            return `Pending (${task.approvedBy.length}/${task.approvers.length})`;
+        }
+        
+        // Show message function
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'success-message' : type === 'warning' ? 'warning-message' : 'rejection-info';
+            messageDiv.textContent = message;
+            
+            const content = document.querySelector('.content');
+            content.insertBefore(messageDiv, content.firstChild);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+        
+        // Event listeners
+        taskForm.addEventListener('submit', createTask);
+        
+        // Initialize dashboard
+        updateDashboard();
+        renderTasks();
+        renderApprovals();
+        
+        // Add some demo data for recording
+        function addDemoData() {
+            const demoTask = {
+                id: 'demo-1',
+                title: 'Implement New Feature',
+                description: 'Add user authentication system with multi-factor authentication support',
+                requester: 'manager@company.com',
+                approvers: ['tech@company.com', 'security@company.com', 'demo@company.com'],
+                status: 'pending',
+                createdAt: new Date(),
+                approvedBy: ['tech@company.com'],
+                rejectedBy: [],
+                canProceed: false
+            };
+            
+            tasks.push(demoTask);
+            
+            // Add approval records
+            demoTask.approvers.forEach(approver => {
+                approvals.push({
+                    id: `${demoTask.id}-${approver}`,
+                    taskId: demoTask.id,
+                    approver: approver,
+                    status: approver === 'tech@company.com' ? 'approved' : 'pending',
+                    createdAt: new Date(),
+                    approvedAt: approver === 'tech@company.com' ? new Date() : null,
+                    rejectedAt: null,
+                    reason: null
+                });
+            });
+            
+            updateDashboard();
+            renderTasks();
+            renderApprovals();
+        }
+        
+        // Uncomment the line below to add demo data for recording
+        // addDemoData();
     </script>
 </body>
 </html> 
