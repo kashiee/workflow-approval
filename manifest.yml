@@ -12,11 +12,8 @@ modules:
       title: Workflow Approvals
       route: workflow-approvals
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue.svg
-      resource: main
   function:
     - key: resolver
-      handler: index.handler
-    - key: main
       handler: index.handler
 
 permissions:

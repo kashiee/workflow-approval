@@ -19,17 +19,59 @@ let tasks = [];
 let approvals = [];
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState("user@company.com");
+  const [currentUser, setCurrentUser] = useState("demo@company.com");
   const [tasksList, setTasksList] = useState([]);
   const [approvalsList, setApprovalsList] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("demo@company.com");
 
   useEffect(() => {
     loadData();
+    // Add demo data for testing
+    if (tasks.length === 0) {
+      addDemoData();
+    }
   }, []);
 
   const loadData = () => {
     setTasksList(tasks);
     setApprovalsList(approvals);
+  };
+
+  const addDemoData = () => {
+    const demoTask = {
+      id: 'demo-1',
+      title: 'Implement Security Protocol',
+      description: 'Add multi-factor authentication and encryption to user login system',
+      requester: 'manager@company.com',
+      approvers: ['security@company.com', 'user1@test.com', 'user2@test.com'],
+      status: 'pending',
+      createdAt: new Date(),
+      approvedBy: ['security@company.com'],
+      rejectedBy: []
+    };
+    
+    tasks.push(demoTask);
+    
+    // Add approval records
+    demoTask.approvers.forEach(approver => {
+      approvals.push({
+        id: `${demoTask.id}-${approver}`,
+        taskId: demoTask.id,
+        approver: approver,
+        status: approver === 'security@company.com' ? 'approved' : 'pending',
+        createdAt: new Date(),
+        approvedAt: approver === 'security@company.com' ? new Date() : null,
+        rejectedAt: null,
+        reason: null
+      });
+    });
+    
+    loadData();
+  };
+
+  const switchUser = (newUser) => {
+    setCurrentUser(newUser);
+    setSelectedUser(newUser);
   };
 
   const createTask = async (formData) => {
@@ -122,10 +164,36 @@ const App = () => {
       children: [
         Text({
           children: [
-            "🚀 Task Approval Workflow",
-            "Tasks require approval from ALL users before proceeding"
+            "🚀 Professional Workflow Approval System",
+            "Tasks require approval from ALL designated users before proceeding"
           ]
         }),
+        
+        // User Switcher Section
+        Text({ children: ["👤 Demo User Switcher"] }),
+        Text({ 
+          children: [`Current User: ${currentUser}`] 
+        }),
+        Text({ 
+          children: ["Switch to different users to test the approval workflow:"] 
+        }),
+        Select({
+          placeholder: "Select user to switch to",
+          value: selectedUser,
+          onChange: (value) => setSelectedUser(value),
+          children: [
+            Option({ text: "demo@company.com", value: "demo@company.com" }),
+            Option({ text: "user1@test.com", value: "user1@test.com" }),
+            Option({ text: "user2@test.com", value: "user2@test.com" }),
+            Option({ text: "security@company.com", value: "security@company.com" }),
+            Option({ text: "manager@company.com", value: "manager@company.com" })
+          ]
+        }),
+        Button({
+          text: "Switch User",
+          onClick: () => switchUser(selectedUser)
+        }),
+        Text({ children: ["---"] }),
         
         // Create New Task Form
         Text({ children: ["📝 Create New Task"] }),
@@ -196,7 +264,7 @@ const App = () => {
         }),
 
         // Pending Approvals for Current User
-        Text({ children: ["⏳ Your Pending Approvals"] }),
+        Text({ children: [`⏳ Pending Approvals for ${currentUser}`] }),
         Table({
           children: [
             Head({
@@ -223,7 +291,7 @@ const App = () => {
                       ]
                     }),
                     Cell({ children: [task?.requester || ''] }),
-                    Cell({ children: ["⏳ Pending"] }),
+                    Cell({ children: ["⏳ Pending Approval"] }),
                     Cell({
                       children: [
                         Button({
@@ -235,6 +303,48 @@ const App = () => {
                           onClick: () => rejectTask(approval.taskId, currentUser, "Rejected by user")
                         })
                       ]
+                    })
+                  ]
+                });
+              })
+          ]
+        }),
+        
+        // Show approved/rejected tasks for current user
+        Text({ children: [`📊 Your Approval History for ${currentUser}`] }),
+        Table({
+          children: [
+            Head({
+              children: [
+                Cell({ children: ["Task"] }),
+                Cell({ children: ["Your Decision"] }),
+                Cell({ children: ["Date"] })
+              ]
+            }),
+            ...approvalsList
+              .filter(approval => 
+                approval.approver === currentUser && 
+                approval.status !== 'pending'
+              )
+              .map(approval => {
+                const task = tasks.find(t => t.id === approval.taskId);
+                return Row({
+                  children: [
+                    Cell({ 
+                      children: [
+                        Text({ children: [task?.title || 'Unknown Task'] })
+                      ]
+                    }),
+                    Cell({ 
+                      children: [
+                        approval.status === 'approved' ? "✅ Approved" : "❌ Rejected"
+                      ] 
+                    }),
+                    Cell({ 
+                      children: [
+                        approval.approvedAt ? new Date(approval.approvedAt).toLocaleDateString() :
+                        approval.rejectedAt ? new Date(approval.rejectedAt).toLocaleDateString() : "N/A"
+                      ] 
                     })
                   ]
                 });
